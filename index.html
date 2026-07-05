@@ -142,8 +142,16 @@ body.opener-active .sm-opener{display:block;}
   cursor:pointer;
 }
 .sm-opener_content-slider_arrow{
-  background: url('arrow.webp') 50% 50% no-repeat;
-  background-size: 44px 44px;
+  position:absolute;left:4px;top:50%;
+  transform:translateY(-50%);
+  width:48px;height:48px;
+  background:rgba(255,255,255,.15) url('arrow.webp') 50% 50% no-repeat;
+  background-size:44px 44px;
+  border-radius:50%;
+  cursor:grab;
+  user-select:none;
+  -webkit-user-select:none;
+  flex-shrink:0;
 }
 .sm-opener_content-slider_arrow.animated{
   animation:arrowAnim 1s 0s infinite ease-in-out;
