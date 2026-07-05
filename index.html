@@ -142,16 +142,8 @@ body.opener-active .sm-opener{display:block;}
   cursor:pointer;
 }
 .sm-opener_content-slider_arrow{
-  position:absolute;left:4px;top:50%;
-  transform:translateY(-50%);
-  width:48px;height:48px;
-  background:rgba(255,255,255,.15) url("arrow.webp") 50% 50% no-repeat;
-  background-size:44px 44px;
-  border-radius:50%;
-  cursor:grab;
-  user-select:none;
-  -webkit-user-select:none;
-  flex-shrink:0;
+  background: url('arrow.webp') 50% 50% no-repeat;
+  background-size: 44px 44px;
 }
 .sm-opener_content-slider_arrow.animated{
   animation:arrowAnim 1s 0s infinite ease-in-out;
@@ -1273,11 +1265,7 @@ body.opener-active .sm-opener{display:block;}
     <div class="sm-section__text">
       <div class="sm-ico item-animation item-atop">
         <!-- Pin SVG (замена pin.gif) -->
-        <svg class="pin.gif" viewBox="0 0 60 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" style="display:block;margin:0 auto;">
-          <path d="M30 2C18.954 2 10 10.954 10 22C10 37 30 68 30 68C30 68 50 37 50 22C50 10.954 41.046 2 30 2Z" fill="#1a1a1a" stroke="#111" stroke-width="1"/>
-          <circle cx="30" cy="22" r="9" fill="white" opacity=".85"/>
-          <ellipse cx="30" cy="69" rx="12" ry="2.5" fill="rgba(0,0,0,.15)"/>
-        </svg>
+        <img src="pin.gif" style="width:52px;display:block;margin:30px auto 20px;">
       </div>
       <h2 class="sm-title sm-title-font item-animation item-aright">МЕСТО<br>ПРОВЕДЕНИЯ</h2>
       <div class="sm-subtitle sm-alt-font item-animation item-aleft">Save the place!</div>
