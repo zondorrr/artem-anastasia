@@ -1788,6 +1788,16 @@ $('rm-sub').addEventListener('click',async()=>{
     $('th-p').textContent=att.value==='yes'?'Мы получили ваш ответ и с нетерпением ждём встречи!':'Спасибо, что предупредили — нам будет вас не хватать.';
   }catch(e){alert('Ошибка');btn.disabled=false;btn.textContent='ПОДТВЕРДИТЬ';}
 });
+    // Запуск музыки при первом касании на мобильных
+  document.addEventListener('touchstart', function tryPlay() {
+    if (!playing && aud.src) {
+      aud.play().then(() => {
+        playing = true;
+        document.getElementById('mic-lb').textContent = 'Выкл.';
+        document.getElementById('mic-ic').textContent = '♫';
+      }).catch(() => {});
+    }
+  }, { passive: true });
 
 
 
