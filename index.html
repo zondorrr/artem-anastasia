@@ -1754,6 +1754,8 @@ window.toggleMusic = function() {
   if (playing) {
     aud.pause();
     aud.currentTime = 0;   // сбрасываем позицию
+    aud.src = '';   // полностью убираем источник
+    aud.load();
     playing = false;
     soundOff = true;
     refreshMusicButton();
