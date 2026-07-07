@@ -954,8 +954,6 @@ body.opener-active .sm-opener{display:block;}
 .sm-form_checkbox_input:checked + .sm-form_checkbox_box{
   background-color:var(--text-clr-1);
 }
-#rm-guests-block{max-height:0;overflow:hidden;transition:max-height .3s ease;}
-#rm-guests-block.open{max-height:100px;}
 .sm-form-thanks{display:none;text-align:center;padding:40px 0;}
 .sm-form-thanks h3{
   font-family:var(--title-font-family);
@@ -1282,12 +1280,6 @@ body.opener-active .sm-opener{display:block;}
             <span class="sm-form_checkbox_box"></span>
             К сожалению, не смогу
           </label>
-        </div>
-        <div id="rm-guests-block" style="max-height:0; overflow:hidden; transition:max-height 0.3s ease;">
-          <div class="sm-form__block">
-            <span class="sm-form__block__title">СКОЛЬКО ВАС БУДЕТ?</span>
-            <input class="sm-form__input" type="number" id="rf-guests" min="1" max="10" value="1">
-          </div>
         </div>
         <div class="sm-form__block">
           <span class="sm-form__block__title">ВАШИ ПРЕДПОЧТЕНИЯ</span>
@@ -1629,17 +1621,6 @@ window.closeRsvp = function() {
     document.body.classList.remove('lock');
 };
 
-// Показываем/скрываем блок с количеством гостей
-document.querySelectorAll('input[name="att"]').forEach(r => {
-  r.addEventListener('change', function() {
-    const block = $('rm-guests-block');
-    if (this.value === 'yes') {
-      block.style.maxHeight = '100px';
-    } else {
-      block.style.maxHeight = '0';
-    }
-  });
-});
 
 // ===== ОТПРАВКА В GOOGLE SHEETS =====
 $('rm-sub').addEventListener('click', async function() {
@@ -1652,7 +1633,7 @@ $('rm-sub').addEventListener('click', async function() {
   btn.disabled = true;
   btn.textContent = 'ОТПРАВЛЯЕМ...';
 
-  const guests = att.value === 'yes' ? (parseInt($('rf-guests').value) || 1) : 0;
+  const guests = att.value === 'yes' ? 1 : 0;
   const food = (document.querySelector('input[name="food"]:checked') || {}).value || '';
 
   const payload = {
