@@ -366,35 +366,34 @@ body.opener-active .sm-opener{display:block;}
 .sm-lead-name{text-align:left;display:block;position:relative;}
 /* Второе имя — с отступом (имитирует & слева) */
 .sm-lead-name:last-child{
-  text-align:left;
-  padding-left:1.1em; /* место для & */
+  padding-left:1.1em;
   position:relative;
 }
-/* Декоративный & (большой, полупрозрачный) */
 .sm-lead-name:last-child::before{
   content:"&";
   font-family:var(--title-font-family);
   font-style:italic;
   font-size:2.4em;
   position:absolute;
-  top:59%;left:-.1em;
+  top:59%;
+  left:-.1em;
   transform:translateY(-46%);
-  opacity:.15;z-index:0;
+  opacity:.15;
+  z-index:-1;
   pointer-events:none;
   display:block;
   line-height:1;
 }
-/* Mobile helper */
-.sm-lead .sm-mobile-helper{
-  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
-}
 
-/* Desktop lead */
-@media(min-width:501px){
-  .sm-lead .sm-container::after{aspect-ratio:449/638;max-width:449px;margin:0 auto;}
-  .sm-lead-names{font-size:78px;letter-spacing:-3.9px;}
-  .sm-lead-title{font-size:52px;}
-  .sm-lead .sm-mobile-helper{display:none;}
+/* добавляем отдельно под мобилу */
+@media(max-width:500px){
+  .sm-lead-name:last-child{
+    padding-left:1.5em; /* было 1.1em — даём больше места под "А" */
+  }
+  .sm-lead-name:last-child::before{
+    left:-.55em; /* было -.1em — уводим & сильнее влево, из-под буквы */
+    font-size:2.1em; /* слегка уменьшаем, чтобы не вылезал за левый край экрана */
+  }
 }
 
 /* ══════════════════════════════════════
