@@ -65,18 +65,13 @@ a{text-decoration:none;color:inherit;}
 ul{list-style:none;}
 input,textarea{all:unset;box-sizing:border-box;}
 
-/* ── Page wrapper ── */
+/* ── Page wrapper — полная ширина как в исходном коде WedWed ── */
 #page{
   background:#fff;
   width:100%;
-  max-width:430px;
-  margin:0 auto;
   min-height:100vh;
   position:relative;
   overflow-x:hidden;
-}
-@media(min-width:432px){
-  #page{box-shadow:0 0 80px rgba(0,0,0,.18);}
 }
 
 /* ══════════════════════════════════════
@@ -135,7 +130,6 @@ body.opener-active .sm-opener{display:block;}
   border:1px solid rgba(255,255,255,.7);
   border-radius:100px;
   width:250px;
-  background-size:150px auto;
   padding:2px;
   position:relative;
   overflow:hidden;
@@ -145,8 +139,8 @@ body.opener-active .sm-opener{display:block;}
   position:absolute;left:4px;top:50%;
   transform:translateY(-50%);
   width:48px;height:48px;
-  background:rgba(255,255,255,.15) url('arrow.webp') 50% 50% no-repeat;
-  background-size:44px 44px;
+  background:url('arrow.webp') 50% 50% no-repeat;
+  background-size:contain;
   border-radius:50%;
   cursor:grab;
   user-select:none;
@@ -196,9 +190,6 @@ body.opener-active .sm-opener{display:block;}
   cursor:pointer;color:#111;box-shadow:0 2px 12px rgba(0,0,0,.1);
 }
 #music-btn.show{display:flex;}
-@media(min-width:432px){
-  #music-btn{right:calc((100vw - 430px)/2 + 14px);}
-}
 
 /* ══════════════════════════════════════
    АНИМАЦИИ (точно как в WedWed)
@@ -299,20 +290,22 @@ body.opener-active .sm-opener{display:block;}
 }
 
 /* ══════════════════════════════════════
-   ПЛАШКА СНИЗУ
+   ПЛАШКА СНИЗУ — скрыта, показывается после пролистывания героя
 ══════════════════════════════════════ */
 .sm-mob-btn{
   display:block;width:100%;height:60px;
   position:fixed;bottom:0;left:0;z-index:99;
+  opacity:0;pointer-events:none;
+  transition:opacity .4s ease;
+}
+.sm-mob-btn.visible{
+  opacity:1;pointer-events:auto;
 }
 .sm-mob-btn .sm-btn{
   height:60px;line-height:60px;width:100%;border-radius:0;
   display:flex;align-items:center;justify-content:center;
   font-size:12px;letter-spacing:.12em;margin:0;
   padding:0;text-align:center;
-}
-@media(min-width:432px){
-  .sm-mob-btn{left:50%;transform:translateX(-50%);width:430px;}
 }
 
 /* ══════════════════════════════════════
@@ -498,48 +491,47 @@ body.opener-active .sm-opener{display:block;}
   opacity:1;font-weight:400;color:var(--text-clr-1);
   position:relative;
 }
-/* Сердечко вместо circle (GIF заменён CSS-анимацией) */
-.sm-cal-cell.active::before,.sm-cal-cell.active::after{
+/* Сердечко — heart_moving.gif как в исходном коде WedWed */
+.sm-cal-cell.active::before{
   content:"";position:absolute;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
   width:28px;height:28px;
-  background:none;
-  z-index:-1;
-  pointer-events:none;
-  animation:heartBeat 1.2s infinite;
-}
-/* Сердечко SVG inline как background */
-.sm-cal-cell.active::before{
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 24.5 C 5 18, 1 12, 1 8 A6 6 0 0 1 14 6 A6 6 0 0 1 27 8 C 27 12, 23 18, 14 24.5Z' fill='%23d4a0a0' opacity='.5'/%3E%3C/svg%3E") 50% 50% no-repeat;
-  background-size:28px 28px;
+  background:url('heart_moving.gif') 50% 50% no-repeat;
+  background-size:100% auto;
+  filter:sepia(100) saturate(100) contrast(2.5) brightness(.7);
+  z-index:0;pointer-events:none;
 }
 
 /* ══════════════════════════════════════
-   3. LOCATION (Место)
+   3. LOCATION (Место) — фото фон, карточка поверх
 ══════════════════════════════════════ */
 .sm-location{padding:0;background:#fff;}
-.sm-location .sm-container{padding-top:80px;padding-bottom:80px;display:block;}
-/* Фото места — full-width */
-.sm-location .sm-location__image{
-  display:block;position:relative;width:100%;overflow:hidden;
+.sm-location .sm-container{
+  padding:0;position:relative;min-height:480px;
+  display:flex;align-items:center;justify-content:center;
 }
-.sm-location .sm-location__image .sm-img{
-  display:block;position:relative;overflow:hidden;
+/* Фото — абсолютный фон всей секции */
+.sm-location .sm-location__image{
+  position:absolute;inset:0;overflow:hidden;z-index:1;
 }
 .sm-location .sm-location__image img{
-  width:100%;height:auto;display:block;object-fit:cover;
+  width:100%;height:100%;object-fit:cover;object-position:center;display:block;
 }
-/* Белая карточка */
+/* Белая карточка поверх фото */
 .sm-location .sm-section__text{
-  width:100%;padding:14px 14px 40px;text-align:center;
-  background:#fff;position:relative;margin:0;
+  position:relative;z-index:2;
+  background:#fff;
+  margin:40px 22px;
+  padding:30px 22px 36px;
+  text-align:center;
+  width:calc(100% - 44px);
 }
 /* Пин */
-.sm-location .sm-ico{margin:30px auto 20px;width:52px;display:block;}
-.sm-location .sm-ico img{display:block;width:100%;transform:scale(1.9) translateY(-10px);filter:grayscale(100%);}
-/* SVG пин (если нет gif) */
-.sm-pin-svg{width:52px;height:60px;margin:30px auto 20px;display:block;}
+.sm-location .sm-ico{margin:0 auto 16px;width:52px;display:block;}
+.sm-location .sm-ico img{display:block;width:100%;filter:grayscale(100%);}
+/* SVG пин */
+.sm-pin-svg{width:52px;height:60px;margin:0 auto 16px;display:block;}
 .sm-location .sm-title{
   font-size:42px;text-transform:uppercase;
   line-height:1.2;letter-spacing:-2.1px;font-weight:300;margin:0 0 10px;
@@ -560,25 +552,12 @@ body.opener-active .sm-opener{display:block;}
 }
 
 @media(min-width:501px){
-  .sm-location .sm-container{padding-top:200px;padding-bottom:90px;}
-  .sm-location .sm-location__image{
-    position:absolute;top:90px;bottom:256px;left:0;right:0;
-  }
-  .sm-location .sm-location__image .sm-img{
-    background:#000;position:absolute;top:0;bottom:0;
-    left:50%;width:100%;max-width:1055px;overflow:hidden;
-    transform:translateX(-50%);
-  }
-  .sm-location .sm-location__image img{
-    position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;
-  }
+  .sm-location .sm-container{min-height:620px;}
   .sm-location .sm-section__text{
-    position:relative;z-index:2;max-width:584px;
-    margin:0 auto;padding:14px 30px 60px;
-    box-shadow:0 4px 30px 0 rgba(0,0,0,.05);
+    max-width:584px;margin:60px auto;padding:30px 48px 44px;
+    box-shadow:0 4px 30px 0 rgba(0,0,0,.08);
   }
-  .sm-location .sm-ico{width:90px;margin-bottom:20px;margin-top:0;}
-  .sm-location .sm-ico img{transform:none;}
+  .sm-location .sm-ico{width:72px;margin-bottom:16px;}
   .sm-location .sm-title{font-size:64px;letter-spacing:-3.2px;margin-bottom:10px;}
   .sm-location .sm-subtitle{font-size:52px;margin-bottom:10px;}
   .sm-location .sm-text{font-size:16px;letter-spacing:-.8px;}
@@ -846,22 +825,18 @@ body.opener-active .sm-opener{display:block;}
   letter-spacing:-.6px;text-align:center;
   min-height:3em;transition:opacity .18s;
 }
+/* Стрелки — arrow.webp как в исходном коде WedWed */
 .sm-wishes .sm-arrow{
-  position:absolute;top:50%;width:44px;height:44px;margin:-22px 0 0;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-family:var(--text-font-family);font-size:20px;color:#777;
-  border:none;background:none;user-select:none;
+  position:absolute;top:50%;width:30px;height:30px;margin:-15px 0 0;
+  cursor:pointer;display:block;
+  background:url('arrow.webp') 50% 50% no-repeat;
+  background-size:contain;
+  border:none;font-size:0;user-select:none;
+  opacity:.7;transition:opacity .2s;
 }
-.sm-wishes .sm-arrow-prev{left:8px;}
-.sm-wishes .sm-arrow-next{left:auto;right:8px;}
-.sm-wishes .sm-btn{
-  display:inline-flex;vertical-align:top;
-  height:31px;line-height:31px;padding:0 35px;
-  border:0;background:var(--text-clr-1);
-  font-size:12px;border-radius:0;min-width:0;
-  text-transform:uppercase;font-weight:400;color:#fff;
-  margin:40px 0 0;font-family:var(--text-font-family);cursor:pointer;
-}
+.sm-wishes .sm-arrow:hover{opacity:1;}
+.sm-wishes .sm-arrow-prev{left:6px;transform:scaleX(-1);}
+.sm-wishes .sm-arrow-next{left:auto;right:6px;}
 /* точки пагинации */
 .sm-wish-dots{
   display:flex;justify-content:center;gap:6px;margin-top:14px;
@@ -1198,7 +1173,10 @@ body.opener-active .sm-opener{display:block;}
         <div class="sm-opener_content-slider_arrow animated" id="opener-arrow"></div>
         <div class="sm-opener_content-slider_label">Открыть приглашение</div>
       </div>
-      
+      <div class="sm-opener-hint">
+        <div class="sm-opener_content-button"></div>
+        <span>Для просмотра коснитесь экрана</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1213,8 +1191,14 @@ body.opener-active .sm-opener{display:block;}
 <div id="page">
 
 <!-- 1. LEAD -->
-<section class="sm-lead">
+<section class="sm-lead" id="sm-lead">
   <div class="sm-container">
+    <!-- Фото — абсолютный фон -->
+    <div class="sm-lead-image">
+      <div class="sm-lead-title sm-alt-font">Wedding</div>
+      <img id="hero-img" src="" alt="" loading="eager">
+    </div>
+    <!-- Имена — поверх фото снизу-слева (как в исходном CSS) -->
     <div class="sm-lead-names sm-title-font">
       <div class="sm-lead-names-content">
         <div class="sm-lead-name item-animation item-aright">
@@ -1225,10 +1209,7 @@ body.opener-active .sm-opener{display:block;}
         </div>
       </div>
     </div>
-    <div class="sm-lead-image item-animation item-atop">
-      <div class="sm-lead-title sm-alt-font" id="lead-wedding-title">Wedding</div>
-      <img id="hero-img" src="" alt="" loading="eager">
-    </div>
+    <!-- Листайте вниз -->
     <div class="sm-mobile-helper item-animation item-atop">
       Листайте вниз
       <span class="sm-mobile-helper-ico">
@@ -1262,18 +1243,17 @@ body.opener-active .sm-opener{display:block;}
   </div>
 </section>
 
-<!-- 3. LOCATION -->
+<!-- 3. LOCATION — фото фон, белая карточка поверх -->
 <section class="sm-location">
   <div class="sm-container">
-    <div class="sm-location__image item-animation item-atop">
-      <div class="sm-img">
-        <img id="venue-img" src="" alt="" loading="lazy">
-      </div>
+    <!-- фото — абсолютный фон секции -->
+    <div class="sm-location__image">
+      <img id="venue-img" src="" alt="" loading="lazy">
     </div>
-    <div class="sm-section__text">
-      <div class="sm-ico item-animation item-atop">
-        <!-- Pin SVG (замена pin.gif) -->
-        <img src="pin.gif" style="width:52px;display:block;margin:30px auto 20px;">
+    <!-- белая карточка поверх фото -->
+    <div class="sm-section__text item-animation item-atop">
+      <div class="sm-ico">
+        <img src="pin.gif" style="width:52px;display:block;margin:0 auto;" alt="">
       </div>
       <h2 class="sm-title sm-title-font item-animation item-aright">МЕСТО<br>ПРОВЕДЕНИЯ</h2>
       <div class="sm-subtitle sm-alt-font item-animation item-aleft">Save the place!</div>
@@ -1365,7 +1345,6 @@ body.opener-active .sm-opener{display:block;}
       <button class="sm-arrow sm-arrow-next" id="w-next">→</button>
     </div>
     <div class="sm-wish-dots" id="wish-dots"></div>
-    <a class="sm-btn item-animation item-atop" id="gifts-btn" href="#" target="_blank" rel="noopener">СПИСОК ПОДАРКОВ</a>
   </div>
 </section>
 
@@ -1549,15 +1528,15 @@ const C = {
 
   /* ── Тайминг ── */
   schedule: [
-    { time: '15:00', label: 'Сбор гостей' },
-    { time: '15:30', label: 'Церемония венчания' },
-    { time: '16:30', label: 'Банкет' },
-    { time: '22:00', label: 'Завершение вечера' },
+    { time: '12:00', label: 'Сбор гостей' },
+    { time: '12:30', label: 'Церемония регистрации' },
+    { time: '13:30', label: 'Банкет в Особняке Путилова' },
+    { time: '23:00', label: 'Завершение вечера' },
   ],
 
   /* ── Дресс-код ── */
   dressText: 'Мы очень ждём и готовимся к нашему незабываемому дню! Поддержите нас Вашими улыбками и объятиями, а также красивыми нарядами в палитре мероприятия',
-  dressColors: ['#FFD1DC','#FDD0BD','#C2CCA8','#FFFACD','#EFDECD'],
+  dressColors: ['#111111','#7B0D0D','#D4C4AE'],
 
   /* ── Фото дресс-кода (рядом с index.html) ── */
   ladiesPhotos: ['w1.JPG','w2.JPG','w3.JPG','w4.JPG','w5.JPG'],
@@ -1674,13 +1653,13 @@ tx('cal-yr',String(wd.getFullYear()).slice(2));
   });
 })();
 
-/* ── Варианты меню RSVP ── */
+/* ── Варианты меню RSVP — radio (один вариант) ── */
 (function(){
   const el=$('rf-food-list');
   C.foodOptions.forEach(o=>{
     const l=document.createElement('label');
     l.className='sm-form_checkbox';
-    l.innerHTML=`<input class="sm-form_checkbox_input" type="checkbox" value="${o}"><span class="sm-form_checkbox_box"></span> ${o}`;
+    l.innerHTML=`<input class="sm-form_checkbox_input" type="radio" name="food" value="${o}"><span class="sm-form_checkbox_box"></span> ${o}`;
     el.appendChild(l);
   });
 })();
@@ -1725,6 +1704,13 @@ function handleScroller(){
     document.querySelectorAll('.item-animation').forEach(el=>{
       checkVis(el,()=>el.classList.add('item-active'));
     });
+  }
+  /* 5. Плашка — появляется после пролистывания героя */
+  const lead=$('sm-lead');
+  const bar=$('rsvp-bar');
+  if(lead&&bar){
+    const heroBottom=lead.offsetTop+lead.offsetHeight;
+    bar.classList.toggle('visible',window.scrollY>heroBottom-100);
   }
 }
 window.addEventListener('scroll',()=>{
@@ -1793,17 +1779,25 @@ window.addEventListener('resize',()=>{
   track.addEventListener('click',()=>{if(!opened)doOpen();});
 })();
 
-/* ── Музыка ── */
+/* ── Музыка — кнопка появляется сразу после открытия сайта ── */
 let playing=false;
 const aud=$('aud');
 const mb=$('music-btn');
 function startMusic(){
   if(!C.musicUrl)return;
   aud.src=C.musicUrl;
+  /* Показываем кнопку немедленно (не ждём play promise) */
+  mb.classList.add('show');
+  $('mic-lb').textContent='Звук';
+  $('mic-ic').textContent='♪';
   aud.play().then(()=>{
-    playing=true;mb.classList.add('show');
-    $('mic-lb').textContent='Выкл.';$('mic-ic').textContent='♫';
-  }).catch(()=>{if(C.musicUrl)mb.classList.add('show');});
+    playing=true;
+    $('mic-lb').textContent='Выкл.';
+    $('mic-ic').textContent='♫';
+  }).catch(()=>{
+    /* autoplay заблокирован — кнопка всё равно видна, пользователь нажмёт сам */
+    playing=false;
+  });
 }
 window.toggleMusic=()=>{
   if(playing){aud.pause();playing=false;$('mic-lb').textContent='Звук';$('mic-ic').textContent='♪';}
@@ -1847,7 +1841,7 @@ $('rm-sub').addEventListener('click',async()=>{
   if(!att){alert('Выберите вариант');return;}
   const btn=$('rm-sub');btn.disabled=true;btn.textContent='ОТПРАВЛЯЕМ...';
   const guests=att.value==='yes'?(parseInt($('rf-guests').value)||1):0;
-  const food=[...document.querySelectorAll('#rf-food-list input:checked')].map(i=>i.value).join(', ');
+  const food=(document.querySelector('input[name="food"]:checked')||{}).value||'';
   const entry={id:Date.now()+'-'+Math.random().toString(36).slice(2,6),
     name,att:att.value,guests,food,createdAt:Date.now()};
   try{
