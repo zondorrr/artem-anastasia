@@ -1721,9 +1721,9 @@ let playing=false;
 const aud=$('aud');
 const mb=$('music-btn');
 function startMusic(){
-  if(!C.musicUrl)return;
-  aud.src=C.musicUrl;
-  /* Показываем кнопку немедленно (не ждём play promise) */
+  if(!C.musicUrl) return;
+  aud.src = C.musicUrl;
+  aud.load(); // <-- принудительная загрузка
   mb.classList.add('show');
   $('mic-lb').textContent='Звук';
   $('mic-ic').textContent='♪';
@@ -1732,7 +1732,6 @@ function startMusic(){
     $('mic-lb').textContent='Выкл.';
     $('mic-ic').textContent='♫';
   }).catch(()=>{
-    /* autoplay заблокирован — кнопка всё равно видна, пользователь нажмёт сам */
     playing=false;
   });
 }
@@ -1755,7 +1754,9 @@ document.querySelectorAll('input[name="att"]').forEach(r=>{
 });
 
 /* ── Хранилище ── */
-const HS=typeof window.storage!=='undefined';
+const HS = typeof window.storage !== 'undefined';
+const noteTxt = HS ? '' : 'Локальный режим — ответы хранятся в этом браузере.';
+if ($('storage-note')) $('storage-note').textContent = noteTxt;
 if($('storage-note'))$('storage-note').textContent=noteTxt;
 const LK='wr8';
 function lGet(){try{return JSON.parse(localStorage.getItem(LK)||'[]');}catch(e){return[];}}
@@ -1790,14 +1791,21 @@ $('rm-sub').addEventListener('click',async()=>{
 });
     // Запуск музыки при первом касании на мобильных
   document.addEventListener('touchstart', function tryPlay() {
-    if (!playing && aud.src) {
+  if (!playing) {
+    if (!aud.src && C.musicUrl) {
+      aud.src = C.musicUrl;
+      aud.load();
+    }
+    if (aud.src) {
       aud.play().then(() => {
         playing = true;
         document.getElementById('mic-lb').textContent = 'Выкл.';
         document.getElementById('mic-ic').textContent = '♫';
+        mb.classList.add('show');
       }).catch(() => {});
     }
-  }, { passive: true });
+  }
+}, { passive: true });
 
 
 
