@@ -1719,56 +1719,72 @@ window.addEventListener('resize',()=>{
 /* ── Музыка — кнопка появляется сразу после открытия сайта ── */
 let playing = false;
 let soundOff = false;
-const aud=$('aud');
-const mb=$('music-btn');
-function startMusic(){
-  if(!C.musicUrl) return;
-  aud.src = C.musicUrl;
-  aud.load(); // <-- принудительная загрузка
-  mb.classList.add('show');
-  $('mic-lb').textContent='Звук';
-  $('mic-ic').textContent='♪';
-  aud.play().then(()=>{
-    playing=true;
-    $('mic-lb').textContent='Выкл.';
-    $('mic-ic').textContent='♫';
-  }).catch(()=>{
-    playing=false;
-  });
+let isRsvpOpen = false;
+const aud = document.getElementById('aud');
+const mb = document.getElementById('music-btn');
+
+function refreshMusicButton() {
+    const btn = document.getElementById('music-btn');
+    if (soundOff || isRsvpOpen) {
+        btn.style.display = 'none';
+        btn.classList.remove('show');
+    } else {
+        btn.style.display = 'flex';
+        btn.classList.add('show');
+    }
 }
-window.toggleMusic = function() {
-  if (playing) {
-    aud.pause();
-    playing = false;
-    soundOff = true; // больше не включать автоматически
-    document.getElementById('music-btn').style.display = 'none';
-  } else {
+
+function startMusic() {
+    if (!C.musicUrl) return;
+    aud.src = C.musicUrl;
+    aud.load();
+    refreshMusicButton();
     aud.play().then(() => {
-      playing = true;
-      document.getElementById('mic-lb').textContent = 'Выкл.';
-      document.getElementById('mic-ic').textContent = '♫';
-    }).catch(() => {});
-  }
+        playing = true;
+        document.getElementById('mic-lb').textContent = 'Выкл.';
+        document.getElementById('mic-ic').textContent = '♫';
+        refreshMusicButton();
+    }).catch(() => {
+        playing = false;
+        refreshMusicButton();
+    });
+}
+
+window.toggleMusic = function() {
+    if (playing) {
+        aud.pause();
+        playing = false;
+        soundOff = true;
+        refreshMusicButton();
+    } else {
+        aud.play().then(() => {
+            playing = true;
+            document.getElementById('mic-lb').textContent = 'Выкл.';
+            document.getElementById('mic-ic').textContent = '♫';
+            refreshMusicButton();
+        }).catch(() => {});
+    }
 };
 
+
 /* ── RSVP ── */
-window.openRsvp=()=>{
-  $('rsvp-modal').classList.add('sm-open');
-  document.body.classList.add('lock');
+window.openRsvp = function() {
+    isRsvpOpen = true;
+    refreshMusicButton();
+    document.getElementById('rsvp-modal').classList.add('sm-open');
+    document.body.classList.add('lock');
 };
-window.closeRsvp=()=>{
-  $('rsvp-modal').classList.remove('sm-open');
-  document.body.classList.remove('lock');
+window.closeRsvp = function() {
+    isRsvpOpen = false;
+    refreshMusicButton();
+    document.getElementById('rsvp-modal').classList.remove('sm-open');
+    document.body.classList.remove('lock');
 };
-document.querySelectorAll('input[name="att"]').forEach(r=>{
-  r.addEventListener('change',()=>{$('rm-guests-block').className=r.value==='yes'?'open':'';});
-});
 
 /* ── Хранилище ── */
 const HS = typeof window.storage !== 'undefined';
 const noteTxt = HS ? '' : 'Локальный режим — ответы хранятся в этом браузере.';
 if ($('storage-note')) $('storage-note').textContent = noteTxt;
-if($('storage-note'))$('storage-note').textContent=noteTxt;
 const LK='wr8';
 function lGet(){try{return JSON.parse(localStorage.getItem(LK)||'[]');}catch(e){return[];}}
 function lAdd(e){const a=lGet();a.push(e);localStorage.setItem(LK,JSON.stringify(a));}
