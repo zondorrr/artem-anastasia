@@ -1789,10 +1789,6 @@ function startMusic(){
     playing=false;
   });
 }
-document.addEventListener('pointerdown', () => {
-  if (!playing) {
-    startMusic();
-  }
 window.toggleMusic=()=>{
   if(playing){aud.pause();playing=false;$('mic-lb').textContent='Звук';$('mic-ic').textContent='♪';}
   else{aud.play().then(()=>{playing=true;$('mic-lb').textContent='Выкл.';$('mic-ic').textContent='♫';});}
