@@ -1144,7 +1144,7 @@ body.opener-active .sm-opener{display:block;}
 <button id="music-btn" onclick="toggleMusic()">
   <span id="mic-ic">♪</span><span id="mic-lb">Звук</span>
 </button>
-<audio id="aud" loop preload="none"></audio>
+<audio id="aud" loop preload="none" playsinline></audio>
 
 <!-- ══ PAGE ══ -->
 <div id="page">
@@ -1642,7 +1642,7 @@ window.addEventListener('resize',()=>{
   const opener=$('opener');
   const track=$('opener-track');
   const arrow=$('opener-arrow');
-  let opened=false,dragging=false,startX=0;
+  let opened=false, dragging=false, startX=0, currentDx=0; // добавили currentDx
 
   function doOpen(){
     if(opened)return;
@@ -1650,50 +1650,70 @@ window.addEventListener('resize',()=>{
     arrow.classList.remove('animated');
     opener.classList.add('active');
     document.body.classList.remove('opener-active');
-    // Анимируем закрытие
     setTimeout(()=>{
       opener.style.opacity='0';opener.style.pointerEvents='none';
       setTimeout(()=>opener.style.display='none',800);
     },200);
     startMusic();
-    // Запускаем первую волну анимаций
     setTimeout(handleScroller,300);
     setTimeout(handleScroller,800);
   }
 
   // Touch
-  arrow.addEventListener('touchstart',e=>{
-    dragging=true;startX=e.touches[0].clientX;
-    arrow.classList.remove('animated');e.preventDefault();
-  },{passive:false});
-  arrow.addEventListener('touchmove',e=>{
-    if(!dragging)return;
-    const dx=Math.max(0,e.touches[0].clientX-startX);
-    const maxDrag=track.offsetWidth-arrow.offsetWidth-8;
-    arrow.style.left=Math.min(dx+4,maxDrag+4)+'px';
-    if(dx>=maxDrag-10) doOpen();
+  arrow.addEventListener('touchstart', e=>{
+    dragging=true;
+    startX=e.touches[0].clientX;
+    arrow.classList.remove('animated');
     e.preventDefault();
-  },{passive:false});
-  arrow.addEventListener('touchend',()=>{
-    if(!opened){arrow.style.left='4px';dragging=false;}
+  }, {passive:false});
+
+  arrow.addEventListener('touchmove', e=>{
+    if(!dragging) return;
+    const dx=Math.max(0, e.touches[0].clientX - startX);
+    currentDx = dx; // запоминаем смещение
+    const maxDrag=track.offsetWidth - arrow.offsetWidth - 8;
+    arrow.style.left=Math.min(dx+4, maxDrag+4)+'px';
+    // НЕ вызываем doOpen() здесь
+    e.preventDefault();
+  }, {passive:false});
+
+  arrow.addEventListener('touchend', ()=>{
+    if(opened) { dragging=false; return; }
+    const maxDrag=track.offsetWidth - arrow.offsetWidth - 8;
+    if (currentDx >= maxDrag - 10) {
+      doOpen();
+    } else {
+      arrow.style.left='4px';
+      dragging=false;
+    }
+    currentDx = 0;
   });
   // Mouse
-  arrow.addEventListener('mousedown',e=>{
-    dragging=true;startX=e.clientX;
-    arrow.classList.remove('animated');e.preventDefault();
+  arrow.addEventListener('mousedown', e=>{
+    dragging=true;
+    startX=e.clientX;
+    arrow.classList.remove('animated');
+    e.preventDefault();
   });
-  document.addEventListener('mousemove',e=>{
-    if(!dragging)return;
-    const dx=Math.max(0,e.clientX-startX);
-    const maxDrag=track.offsetWidth-arrow.offsetWidth-8;
-    arrow.style.left=Math.min(dx+4,maxDrag+4)+'px';
+  document.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    const dx=Math.max(0, e.clientX - startX);
+    currentDx = dx;
+    const maxDrag=track.offsetWidth - arrow.offsetWidth - 8;
+    arrow.style.left=Math.min(dx+4, maxDrag+4)+'px';
     if(dx>=maxDrag-10) doOpen();
   });
-  document.addEventListener('mouseup',()=>{
-    if(!opened&&dragging){arrow.style.left='4px';dragging=false;}
+  document.addEventListener('mouseup', ()=>{
+    if(!opened && dragging){
+      arrow.style.left='4px';
+      dragging=false;
+      currentDx=0;
+    }
   });
   // Клик по треку
-  track.addEventListener('click',()=>{if(!opened)doOpen();});
+  track.addEventListener('click', ()=>{
+    if(!opened) doOpen();
+  });
 })();
 
 /* ── Музыка — кнопка появляется сразу после открытия сайта ── */
@@ -1736,7 +1756,6 @@ document.querySelectorAll('input[name="att"]').forEach(r=>{
 
 /* ── Хранилище ── */
 const HS=typeof window.storage!=='undefined';
-const noteTxt=HS?'':'Локальный режим — ответы хранятся в этом браузере.';
 if($('storage-note'))$('storage-note').textContent=noteTxt;
 const LK='wr8';
 function lGet(){try{return JSON.parse(localStorage.getItem(LK)||'[]');}catch(e){return[];}}
