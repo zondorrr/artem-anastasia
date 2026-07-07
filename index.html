@@ -1735,9 +1735,21 @@ function startMusic(){
     playing=false;
   });
 }
-window.toggleMusic=()=>{
-  if(playing){aud.pause();playing=false;$('mic-lb').textContent='Звук';$('mic-ic').textContent='♪';}
-  else{aud.play().then(()=>{playing=true;$('mic-lb').textContent='Выкл.';$('mic-ic').textContent='♫';});}
+window.toggleMusic = function() {
+  if (playing) {
+    // Останавливаем музыку
+    aud.pause();
+    playing = false;
+    // Скрываем кнопку навсегда (в текущей сессии)
+    document.getElementById('music-btn').style.display = 'none';
+  } else {
+    // Включаем музыку (кнопка уже видна, просто меняем состояние)
+    aud.play().then(() => {
+      playing = true;
+      document.getElementById('mic-lb').textContent = 'Выкл.';
+      document.getElementById('mic-ic').textContent = '♫';
+    }).catch(() => {});
+  }
 };
 
 /* ── RSVP ── */
