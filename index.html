@@ -73,6 +73,7 @@ input,textarea{all:unset;box-sizing:border-box;}
   position:fixed;width:100%;height:100%;left:0;top:0;
   z-index:1010;display:none;
   background:#111;
+  transition:opacity 0.7s ease;
 }
 body.opener-active .sm-opener{display:block;}
 .sm-opener img.sm-opener_background{
@@ -1462,39 +1463,28 @@ C.wishes.forEach((_, i) => {
 function upW(direction) {
   const el = $('wish-text');
   if (direction === 0) {
-    // без анимации
     el.textContent = C.wishes[wi];
     el.style.transform = 'translateX(0)';
     el.style.opacity = '1';
-    document.querySelectorAll('.sm-wish-dot').forEach((d, i) => d.classList.toggle('on', i === wi));
+    document.querySelectorAll('.sm-wish-dot').forEach((d,i) => d.classList.toggle('on', i===wi));
     return;
   }
-
-  // Определяем направление: 1 = вперёд, -1 = назад
-  const isNext = direction === 1;
-  const outX = isNext ? '-30px' : '30px';
-  const inX = isNext ? '30px' : '-30px';
-
-  // 1) Старый текст уезжает
-  el.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
-  el.style.transform = 'translateX(' + outX + ')';
-  el.style.opacity = '0';
-
-  // 2) Через 400мс меняем текст и завозим новый
+  const outX = direction === 1 ? '-100%' : '100%';
+  const inX  = direction === 1 ? '100%'  : '-100%';
+  el.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease';
+  el.style.transform  = `translateX(${outX})`;
+  el.style.opacity    = '0';
   setTimeout(() => {
-    el.textContent = C.wishes[wi];
-    // Ставим новый текст за пределами (с противоположной стороны)
+    el.textContent      = C.wishes[wi];
     el.style.transition = 'none';
-    el.style.transform = 'translateX(' + inX + ')';
-    el.style.opacity = '0';
-    // Принудительный пересчёт
+    el.style.transform  = `translateX(${inX})`;
+    el.style.opacity    = '0';
     void el.offsetHeight;
-    // Включаем transition и приезжаем
-    el.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
-    el.style.transform = 'translateX(0)';
-    el.style.opacity = '1';
-    document.querySelectorAll('.sm-wish-dot').forEach((d, i) => d.classList.toggle('on', i === wi));
-  }, 400);
+    el.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease';
+    el.style.transform  = 'translateX(0)';
+    el.style.opacity    = '1';
+    document.querySelectorAll('.sm-wish-dot').forEach((d,i) => d.classList.toggle('on', i===wi));
+  }, 350);
 }
 
 $('w-prev').onclick = () => {
@@ -1555,11 +1545,11 @@ window.addEventListener('resize', () => {
     setTimeout(() => {
       opener.style.opacity = '0';
       opener.style.pointerEvents = 'none';
-      setTimeout(() => opener.style.display = 'none', 800);
-    }, 200);
+      setTimeout(() => { opener.style.display = 'none'; }, 700);
+    }, 350);
     startMusic();
-    setTimeout(handleScroller, 300);
-    setTimeout(handleScroller, 800);
+    setTimeout(handleScroller, 600);
+    setTimeout(handleScroller, 1100);
   }
   arrow.addEventListener('touchstart', e => {
     dragging = true;
