@@ -1717,7 +1717,8 @@ window.addEventListener('resize',()=>{
 })();
 
 /* ── Музыка — кнопка появляется сразу после открытия сайта ── */
-let playing=false;
+let playing = false;
+let soundOff = false;
 const aud=$('aud');
 const mb=$('music-btn');
 function startMusic(){
@@ -1737,13 +1738,11 @@ function startMusic(){
 }
 window.toggleMusic = function() {
   if (playing) {
-    // Останавливаем музыку
     aud.pause();
     playing = false;
-    // Скрываем кнопку навсегда (в текущей сессии)
+    soundOff = true; // больше не включать автоматически
     document.getElementById('music-btn').style.display = 'none';
   } else {
-    // Включаем музыку (кнопка уже видна, просто меняем состояние)
     aud.play().then(() => {
       playing = true;
       document.getElementById('mic-lb').textContent = 'Выкл.';
@@ -1803,7 +1802,7 @@ $('rm-sub').addEventListener('click',async()=>{
 });
     // Запуск музыки при первом касании на мобильных
   document.addEventListener('touchstart', function tryPlay() {
-  if (!playing) {
+  if (!playing && !soundOff) { // только если звук не выключен навсегда
     if (!aud.src && C.musicUrl) {
       aud.src = C.musicUrl;
       aud.load();
