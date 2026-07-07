@@ -749,8 +749,32 @@ body.opener-active .sm-opener{display:block;}
 .sm-wishes .sm-wishes__content-slide{
   font-size:12px;font-weight:300;line-height:normal;
   letter-spacing:-.6px;text-align:center;
-  min-height:3em;transition:opacity .18s;
+  min-height:3em;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateX(0);
+  opacity: 1;
 }
+.sm-wishes__content-slide.slide-out-left {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+.sm-wishes__content-slide.slide-out-right {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.sm-wishes__content-slide.slide-in-left {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.sm-wishes__content-slide.slide-in-right {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+.sm-wishes__content-slide.slide-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .sm-wishes .sm-arrow{
   position:absolute;top:50%;width:30px;height:30px;margin:-15px 0 0;
   cursor:pointer;display:block;
@@ -1450,15 +1474,36 @@ C.wishes.forEach((_, i) => {
   d.onclick = () => { wi = i; upW(true); };
   dotsEl.appendChild(d);
 });
-function upW(anim){
+function upW(direction) {
   const el = $('wish-text');
-  if(anim){ el.style.opacity = 0; setTimeout(() => { el.textContent = C.wishes[wi]; el.style.opacity = 1; }, 180); }
-  else el.textContent = C.wishes[wi];
-  document.querySelectorAll('.sm-wish-dot').forEach((d, i) => d.classList.toggle('on', i===wi));
+  if (direction === undefined) {
+    el.textContent = C.wishes[wi];
+    el.className = 'sm-wishes__content-slide slide-in';
+    document.querySelectorAll('.sm-wish-dot').forEach((d, i) => d.classList.toggle('on', i === wi));
+    return;
+  }
+  const isNext = direction === 1;
+  const outClass = isNext ? 'slide-out-left' : 'slide-out-right';
+  const inClass = isNext ? 'slide-in-left' : 'slide-in-right';
+  el.className = 'sm-wishes__content-slide ' + outClass;
+  setTimeout(() => {
+    el.textContent = C.wishes[wi];
+    el.className = 'sm-wishes__content-slide ' + inClass;
+    requestAnimationFrame(() => {
+      el.className = 'sm-wishes__content-slide slide-in';
+    });
+    document.querySelectorAll('.sm-wish-dot').forEach((d, i) => d.classList.toggle('on', i === wi));
+  }, 400);
 }
-$('w-prev').onclick = () => { wi = (wi-1 + C.wishes.length) % C.wishes.length; upW(true); };
-$('w-next').onclick = () => { wi = (wi+1) % C.wishes.length; upW(true); };
-upW(false);
+$('w-prev').onclick = () => {
+  wi = (wi - 1 + C.wishes.length) % C.wishes.length;
+  upW(-1);
+};
+$('w-next').onclick = () => {
+  wi = (wi + 1) % C.wishes.length;
+  upW(1);
+};
+upW();
 
 // Обратный отсчёт
 function tick(){
