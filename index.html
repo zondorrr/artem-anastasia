@@ -1623,15 +1623,11 @@ window.closeRsvp = function() {
 
 
 // ===== ОТПРАВКА В GOOGLE SHEETS =====
-$('rm-sub').addEventListener('click', async function() {
+$('rm-sub').addEventListener('click', function() {
   const name = $('rf-name').value.trim();
   const att = document.querySelector('input[name="att"]:checked');
   if (!name) { alert('Введите ваше имя'); return; }
   if (!att) { alert('Выберите вариант'); return; }
-
-  const btn = this;
-  btn.disabled = true;
-  btn.textContent = 'ОТПРАВЛЯЕМ...';
 
   const guests = att.value === 'yes' ? 1 : 0;
   const food = (document.querySelector('input[name="food"]:checked') || {}).value || '';
@@ -1644,28 +1640,22 @@ $('rm-sub').addEventListener('click', async function() {
     createdAt: new Date().toLocaleString()
   };
 
-  try {
-    if (!C.googleScriptUrl) {
-      throw new Error('URL Google Script не задан');
-    }
-    // Используем режим no-cors, чтобы обойти CORS, но ответ прочитать не сможем
-    await fetch(C.googleScriptUrl, {
+  // Отправка в фоне (без ожидания)
+  if (C.googleScriptUrl) {
+    fetch(C.googleScriptUrl, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    });
-    // При no-cors мы не получаем ответ, но предполагаем успех
-    $('rm-form-inner').style.display = 'none';
-    const th = $('rm-thanks');
-    th.style.display = 'block';
-    $('th-h').textContent = att.value === 'yes' ? `СПАСИБО, ${name.split(' ')[0].toUpperCase()}!` : 'СПАСИБО!';
-    $('th-p').textContent = att.value === 'yes' ? 'Мы получили ваш ответ и с нетерпением ждём встречи!' : 'Спасибо, что предупредили — нам будет вас не хватать.';
-  } catch (err) {
-    alert('Произошла ошибка при отправке. Попробуйте ещё раз.');
-    btn.disabled = false;
-    btn.textContent = 'ПОДТВЕРДИТЬ';
+    }).catch(() => {});
   }
+
+  // Мгновенное появление "Спасибо"
+  $('rm-form-inner').style.display = 'none';
+  const th = $('rm-thanks');
+  th.style.display = 'block';
+  $('th-h').textContent = att.value === 'yes' ? `СПАСИБО, ${name.split(' ')[0].toUpperCase()}!` : 'СПАСИБО!';
+  $('th-p').textContent = att.value === 'yes' ? 'Мы получили ваш ответ и с нетерпением ждём встречи!' : 'Спасибо, что предупредили — нам будет вас не хватать.';
 });
 
 // Запуск музыки при касании на мобильных
