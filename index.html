@@ -1419,35 +1419,7 @@ body.opener-active .sm-opener{display:block;}
   </div>
 </div>
 
-<!-- КАБИНЕТ -->
-<div class="admin-mbg" id="admin-modal">
-  <div class="admin-box">
-    <button class="admin-close" id="admin-close">&times;</button>
-    <div id="admin-login">
-      <div class="admin-title">КАБИНЕТ ЖЕНИХА И НЕВЕСТЫ</div>
-      <p style="font-size:12px;color:#888;font-weight:300;margin-bottom:15px;font-family:var(--text-font-family);">Пароль из CONFIG.adminPassword</p>
-      <div class="perr" id="perr" style="display:none;">Неверный пароль</div>
-      <div class="pw">
-        <input type="password" id="ap" placeholder="Пароль">
-        <button id="ag">ВОЙТИ</button>
-      </div>
-    </div>
-    <div id="admin-panel" style="display:none;">
-      <div class="admin-title">ОТВЕТЫ ГОСТЕЙ</div>
-      <div class="stat-row">
-        <div class="stat-box"><div class="stat-n" id="s0">0</div><div class="stat-l">Ответили</div></div>
-        <div class="stat-box"><div class="stat-n" id="s1">0</div><div class="stat-l">Придут</div></div>
-        <div class="stat-box"><div class="stat-n" id="s2">0</div><div class="stat-l">Не придут</div></div>
-        <div class="stat-box"><div class="stat-n" id="s3">0</div><div class="stat-l">Гостей</div></div>
-      </div>
-      <div class="admin-bar">
-        <button id="ar">⟳ Обновить</button>
-        <button id="ac">⬇ CSV</button>
-      </div>
-      <div id="at"></div>
-    </div>
-  </div>
-</div>
+
 
 <!-- FIXED BOTTOM BAR -->
 <div class="sm-mob-btn" id="rsvp-bar" onclick="openRsvp()">
@@ -1520,9 +1492,6 @@ const C = {
 
   /* ── Музыка: mp3 рядом с index.html ('' = без музыки) ── */
   musicUrl: 'music.mp3',
-
-  /* ── Пароль кабинета ── */
-  adminPassword: 'love2026',
 };
 </script>
 
