@@ -1751,19 +1751,20 @@ function startMusic() {
 }
 
 window.toggleMusic = function() {
-    if (playing) {
-        aud.pause();
-        playing = false;
-        soundOff = true;
-        refreshMusicButton();
-    } else {
-        aud.play().then(() => {
-            playing = true;
-            document.getElementById('mic-lb').textContent = 'Выкл.';
-            document.getElementById('mic-ic').textContent = '♫';
-            refreshMusicButton();
-        }).catch(() => {});
-    }
+  if (playing) {
+    aud.pause();
+    aud.currentTime = 0;   // сбрасываем позицию
+    playing = false;
+    soundOff = true;
+    refreshMusicButton();
+  } else {
+    aud.play().then(() => {
+      playing = true;
+      document.getElementById('mic-lb').textContent = 'Выкл.';
+      document.getElementById('mic-ic').textContent = '♫';
+      refreshMusicButton();
+    }).catch(() => {});
+  }
 };
 
 
