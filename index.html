@@ -1396,7 +1396,7 @@ const C = {
   contactsDesc: 'По всем вопросам, связанным с мероприятием, вы можете обратиться к нашему организатору',
   orgName:  'ДАРЬЯ',
   orgPhone: '+7 (966) 144-45-55',
-  orgTg:    'https://t.me/daria_ustimova1',
+  orgTg:    'https://t.me/ustimova_wedding1',
   rsvpDeadline: '9 АВГУСТА 2026',
   foodOptions:  ['Рыба', 'Мясо'],
   musicUrl: 'music.mp3',
@@ -1720,7 +1720,12 @@ $('rm-sub').addEventListener('click', async function() {
   if (!name) { alert('Введите ваше имя'); return; }
   if (!att) { alert('Выберите вариант'); return; }
 
-  const food = (document.querySelector('input[name="food"]:checked') || {}).value || '';
+  const foodEl = document.querySelector('input[name="food"]:checked');
+  if (!foodEl) {
+    alert('Пожалуйста, выберите предпочтение по еде: Рыба или Мясо');
+    return;
+  }
+  const food = foodEl.value;
 
   const payload = {
     name: name,
