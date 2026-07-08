@@ -83,7 +83,9 @@ body.opener-active .sm-opener{display:block;}
   object-fit:cover;object-position:center;
   transition:2s ease;
 }
-.sm-opener.active img.sm-opener_background{width:105%;height:105%;}
+sm-opener.active img.sm-opener_background{
+  transform: translate(-50%, -50%) scale(1.12);
+}
 .sm-opener .sm-opener_wrapper{
   position:absolute;width:100%;height:100%;left:0;top:0;
 }
@@ -1703,7 +1705,8 @@ $('rm-sub').addEventListener('click', function() {
 
 // Запуск музыки при касании на мобильных
 document.addEventListener('touchstart', function tryPlay() {
-  if (!playing && !soundOff) {
+  // Запускаем музыку только если опенер уже закрыт
+  if (!playing && !soundOff && !document.body.classList.contains('opener-active')) {
     if (!aud.src && C.musicUrl) {
       aud.src = C.musicUrl;
       aud.load();
