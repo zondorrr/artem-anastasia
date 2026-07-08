@@ -26,7 +26,6 @@
 @font-face{font-family:"intro_font1";src:url('Montserrat-Light.woff') format('woff');font-weight:300}
 @font-face{font-family:"intro_font2";src:url('RozoviiChulok-Regular.woff2') format('woff2');font-weight:400}
 
-* { max-width: 100% !important; }
 
 :root{
   --title-font-family:"SMHeadersFont","Lovelace",sans-serif;
@@ -378,14 +377,12 @@ body.opener-active .sm-opener{
   pointer-events:none;
 }
 .sm-lead-names{
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-  padding: 0 22px !important;
-  bottom: 70px !important;
-  left: 0 !important;
-  right: 0 !important;
+  position:absolute;bottom:70px;left:0;right:0;
+  font-family:var(--title-font-family);
+  font-size:48px;font-weight:300;letter-spacing:-2.5px;
+  line-height:1.1;text-transform:uppercase;
+  z-index:2;
+  padding:0 22px;
 }
 .sm-lead-names-content{display:inline-block;max-width:100%;}
 .sm-lead-name{text-align:left;display:block;position:relative;}
