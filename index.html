@@ -1713,21 +1713,56 @@ window.closeRsvp = function() {
 };
 
 
-// ===== ОТПРАВКА В GOOGLE SHEETS =====
+// ===== ОТПРАВКА В GOOGLE SHEETS (исправленная версия) =====
+
+// Уникальный ID генерируется один раз при загрузке страницы.
+// Он передаётся с каждой попыткой отправки — так сервер понимает,
+// что это ОДНА и та же заявка, и не создаёт дубль при повторе.
+const SUBMISSION_ID = (crypto.randomUUID
+  ? crypto.randomUUID()
+  : 'sub_' + Date.now() + '_' + Math.random().toString(36).slice(2));
+
+// fetch с таймаутом, чтобы кнопка не висела бесконечно
+async function fetchWithTimeout(url, options, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+// Проверка: а вдруг запись всё-таки уже попала в таблицу?
+async function checkIfSaved(submissionId) {
+  try {
+    const res = await fetch(C.googleScriptUrl + '?checkId=' + 
+encodeURIComponent(submissionId));
+    const data = await res.json();
+    return !!data.exists;
+  } catch (e) {
+    return false;
+  }
+}
+
 $('rm-sub').addEventListener('click', async function() {
   const name = $('rf-name').value.trim();
   const att = document.querySelector('input[name="att"]:checked');
   if (!name) { alert('Введите ваше имя и фамилию'); return; }
-  if (!att) { alert('Пожалуйста, ответьте на вопрос: планируете ли вы присутствовать?'); return; }
+  if (!att) { alert('Пожалуйста, ответьте на вопрос: планируете ли вы 
+присутствовать?'); return; }
 
   const foodEl = document.querySelector('input[name="food"]:checked');
   if (!foodEl) {
     alert('Пожалуйста, выберите предпочтение по еде: Рыба или Мясо');
     return;
   }
+
+
   const food = foodEl.value;
 
   const payload = {
+    id: SUBMISSION_ID,
     name: name,
     att: att.value,
     food: food,
@@ -1738,30 +1773,55 @@ $('rm-sub').addEventListener('click', async function() {
   btn.disabled = true;
   btn.textContent = 'ОТПРАВЛЯЕМ...';
 
-  try {
-    if (!C.googleScriptUrl) throw new Error('URL не задан');
-
-    const response = await fetch(C.googleScriptUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
-    const result = await response.json();
-    if (!result.success) throw new Error('Ошибка записи: ' + (result.error || 'неизвестная ошибка'));
-
-    // Успех
+  const showThanks = () => {
     $('rm-form-inner').style.display = 'none';
     const th = $('rm-thanks');
     th.style.display = 'block';
-    $('th-h').textContent = att.value === 'yes' ? `СПАСИБО, ${name.split(' ')[0].toUpperCase()}!` : 'СПАСИБО!';
-    $('th-p').textContent = att.value === 'yes' ? 'Мы получили ваш ответ и с нетерпением ждём встречи!' : 'Спасибо, что предупредили — нам будет вас не хватать.';
+    $('th-h').textContent = att.value === 'yes'
+      ? `СПАСИБО, ${name.split(' ')[0].toUpperCase()}!`
+      : 'СПАСИБО!';
+    $('th-p').textContent = att.value === 'yes'
+      ? 'Мы получили ваш ответ и с нетерпением ждём встречи!'
+      : 'Спасибо, что предупредили — нам будет вас не хватать.';
+  };
 
-  } catch (err) {
-    alert('Ошибка: ' + err.message);
-    btn.disabled = false;
-    btn.textContent = 'ПОДТВЕРДИТЬ';
+  const MAX_ATTEMPTS = 2;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      if (!C.googleScriptUrl) throw new Error('URL не задан');
+
+      const response = await fetchWithTimeout(C.googleScriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }, 15000);
+
+      if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
+      const result = await response.json();
+      if (!result.success) throw new Error('Ошибка записи: ' + (result.error || 
+'неизвестная ошибка'));
+
+      showThanks();
+      return;
+
+    } catch (err) {
+      // Запрос мог оборваться уже ПОСЛЕ того, как Google Script
+
+
+      // успел записать строку. Проверяем по id перед показом ошибки.
+      const saved = await checkIfSaved(SUBMISSION_ID);
+      if (saved) {
+        showThanks();
+        return;
+      }
+      if (attempt === MAX_ATTEMPTS) {
+        alert('Ошибка: ' + err.message + '\nПопробуйте нажать «Подтвердить» ещё 
+раз — данные не задвоятся.');
+        btn.disabled = false;
+        btn.textContent = 'ПОДТВЕРДИТЬ';
+      }
+      // иначе тихо пробуем ещё раз с тем же id — дубля не будет
+    }
   }
 });
 
