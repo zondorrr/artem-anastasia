@@ -1584,21 +1584,22 @@ window.addEventListener('resize', () => {
     if(opened) return;
     opened = true;
     arrow.classList.remove('animated');
-    opener.classList.add('active');
-    document.body.classList.remove('opener-active');
+    opener.classList.add('active'); // запускаем зум фото
+    startMusic();
     setTimeout(() => {
-      // Начинаем затухание через 1.5 секунды
+      // Через 1.5 секунды (после зума) начинаем плавное затухание опенера
       opener.style.opacity = '0';
       opener.style.pointerEvents = 'none';
-      // После завершения анимации (1.5с) скрываем элемент
+      // После завершения затухания (ещё 1.5с) скрываем элемент и открываем сайт
       setTimeout(() => {
         opener.style.display = 'none';
+        document.body.classList.remove('opener-active');
+        handleScroller();
       }, 1500);
     }, 1500);
-    startMusic();
-    setTimeout(handleScroller, 600);
-    setTimeout(handleScroller, 1100);
+    setTimeout(handleScroller, 3100);
   }
+
   arrow.addEventListener('touchstart', e => {
     dragging = true;
     startX = e.touches[0].clientX;
