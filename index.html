@@ -1717,12 +1717,15 @@ window.closeRsvp = function() {
 $('rm-sub').addEventListener('click', async function() {
   const name = $('rf-name').value.trim();
   const att = document.querySelector('input[name="att"]:checked');
-  
   if (!name) { alert('Введите ваше имя и фамилию'); return; }
   if (!att) { alert('Пожалуйста, ответьте на вопрос: планируете ли вы присутствовать?'); return; }
 
   const foodEl = document.querySelector('input[name="food"]:checked');
-  const food = foodEl ? foodEl.value : '';
+  if (!foodEl) {
+    alert('Пожалуйста, выберите предпочтение по еде: Рыба или Мясо');
+    return;
+  }
+  const food = foodEl.value;
 
   const payload = {
     name: name,
@@ -1736,35 +1739,25 @@ $('rm-sub').addEventListener('click', async function() {
   btn.textContent = 'ОТПРАВЛЯЕМ...';
 
   try {
-    if (!C.googleScriptUrl) throw new Error('URL не задан');
-
-    // Отправляем как text/plain, чтобы избежать проблем с CORS
     const response = await fetch(C.googleScriptUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
 
-    console.log('Статус ответа:', response.status);
-
     if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
-    
     const result = await response.json();
-    console.log('Ответ сервера:', result);
 
     if (!result.success) throw new Error('Ошибка записи: ' + (result.error || 'неизвестная ошибка'));
 
-    // Успешная отправка — переключаем экраны формы
+    // Успех
     $('rm-form-inner').style.display = 'none';
     const th = $('rm-thanks');
     th.style.display = 'block';
-    
-    // Формируем красивое спасибо с именем
-    $('th-h').textContent = att.value === 'yes' ? `СПАСИБО, ${name.split(' ')[0].toUpperCase()}!` : 'СПАСИБО!';
+    $('th-h').textContent = att.value === 'yes' ? СПАСИБО, ${name.split(' ')[0].toUpperCase()}! : 'СПАСИБО!';
     $('th-p').textContent = att.value === 'yes' ? 'Мы получили ваш ответ и с нетерпением ждём встречи!' : 'Спасибо, что предупредили — нам будет вас не хватать.';
 
   } catch (err) {
-    console.error('Ошибка:', err);
     alert('Ошибка: ' + err.message);
     btn.disabled = false;
     btn.textContent = 'ПОДТВЕРДИТЬ';
