@@ -1732,19 +1732,17 @@ $('rm-sub').addEventListener('click', async function() {
   try {
     if (!C.googleScriptUrl) throw new Error('URL не задан');
 
-    // Убираем mode: 'no-cors', чтобы получить ответ от сервера
     const response = await fetch(C.googleScriptUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
 
-    // Проверяем, успешно ли
-    if (!response.ok) throw new Error('Ошибка сервера');
+    if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
     const result = await response.json();
-    if (!result.success) throw new Error('Ошибка записи');
+    if (!result.success) throw new Error('Ошибка записи: ' + (result.error || 'неизвестная ошибка'));
 
-    // Если всё ок – показываем "Спасибо"
+    // Успех
     $('rm-form-inner').style.display = 'none';
     const th = $('rm-thanks');
     th.style.display = 'block';
@@ -1752,7 +1750,7 @@ $('rm-sub').addEventListener('click', async function() {
     $('th-p').textContent = att.value === 'yes' ? 'Мы получили ваш ответ и с нетерпением ждём встречи!' : 'Спасибо, что предупредили — нам будет вас не хватать.';
 
   } catch (err) {
-    alert('Ошибка отправки. Попробуйте ещё раз.');
+    alert('Ошибка: ' + err.message);
     btn.disabled = false;
     btn.textContent = 'ПОДТВЕРДИТЬ';
   }
