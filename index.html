@@ -1717,14 +1717,27 @@ window.closeRsvp = function() {
 $('rm-sub').addEventListener('click', async function() {
   const name = $('rf-name').value.trim();
   const att = document.querySelector('input[name="att"]:checked');
-  if (!name) { alert('Введите ваше имя и фамилию'); return; }
-  if (!att) { alert('Пожалуйста, ответьте на вопрос: планируете ли вы присутствовать?'); return; }
   if (!name) { alert('Введите ваше имя'); return; }
   if (!att) { alert('Выберите вариант'); return; }
+  if (!name) { alert('Введите ваше имя и фамилию'); return; }
+  if (!att) { alert('Пожалуйста, ответьте на вопрос: планируете ли вы присутствовать?'); return; }
 
   const foodEl = document.querySelector('input[name="food"]:checked');
   if (!foodEl) {
-@@ -1739,16 +1739,18 @@
+    alert('Пожалуйста, выберите предпочтение по еде: Рыба или Мясо');
+    return;
+  }
+  const food = foodEl.value;
+
+  const payload = {
+    name: name,
+    att: att.value,
+    food: food,
+    createdAt: new Date().toLocaleString()
+  };
+
+  const btn = this;
+  btn.disabled = true;
   btn.textContent = 'ОТПРАВЛЯЕМ...';
 
   try {
@@ -1732,8 +1745,8 @@ $('rm-sub').addEventListener('click', async function() {
 
     const response = await fetch(C.googleScriptUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
 
@@ -1746,7 +1759,11 @@ $('rm-sub').addEventListener('click', async function() {
     if (!result.success) throw new Error('Ошибка записи: ' + (result.error || 'неизвестная ошибка'));
 
     // Успех
-@@ -1759,27 +1761,28 @@
+    $('rm-form-inner').style.display = 'none';
+    const th = $('rm-thanks');
+    th.style.display = 'block';
+    $('th-h').textContent = att.value === 'yes' ? `СПАСИБО, ${name.split(' ')[0].toUpperCase()}!` : 'СПАСИБО!';
+    $('th-h').textContent = att.value === 'yes' ? СПАСИБО, ${name.split(' ')[0].toUpperCase()}! : 'СПАСИБО!';
     $('th-p').textContent = att.value === 'yes' ? 'Мы получили ваш ответ и с нетерпением ждём встречи!' : 'Спасибо, что предупредили — нам будет вас не хватать.';
 
   } catch (err) {
