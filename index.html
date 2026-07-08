@@ -256,7 +256,10 @@ body.opener-active .sm-opener{
 .item-active.animate-show-l-r{animation:show-l-r ease-in-out 1.8s forwards;}
 .item-active.animate-show-b-t{animation:show-b-t ease-in-out 1.8s forwards;}
 .item-active.animate-show-t-b{animation:show-t-b ease-in-out 1.8s forwards;}
-.sm-dresscode .sm-photo:not(.item-active){opacity:0;}
+.sm-dresscode .sm-photo {
+  opacity: 0;
+  transition: none !important; /* Отключаем конфликтующий transition для этих фото */
+}
 
 /* ОБЩИЕ СТИЛИ */
 .sm-title-font,.sm-title-font *{font-family:var(--title-font-family)!important;font-weight:300;}
