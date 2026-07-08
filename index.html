@@ -81,7 +81,7 @@ body.opener-active .sm-opener{display:block;}
   width:100%;height:100%;
   transform:translate(-50%,-50%);
   object-fit:cover;object-position:center;
-  transition:2s;
+  transition:2s ease;
 }
 .sm-opener.active img.sm-opener_background{width:105%;height:105%;}
 .sm-opener .sm-opener_wrapper{
@@ -1546,10 +1546,14 @@ window.addEventListener('resize', () => {
     opener.classList.add('active');
     document.body.classList.remove('opener-active');
     setTimeout(() => {
+      // Начинаем затухание через 1.5 секунды
       opener.style.opacity = '0';
       opener.style.pointerEvents = 'none';
-      setTimeout(() => { opener.style.display = 'none'; }, 700);
-    }, 350);
+      // После завершения анимации (1.5с) скрываем элемент
+      setTimeout(() => {
+        opener.style.display = 'none';
+      }, 1500);
+    }, 1500);
     startMusic();
     setTimeout(handleScroller, 600);
     setTimeout(handleScroller, 1100);
