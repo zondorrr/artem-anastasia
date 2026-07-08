@@ -1797,8 +1797,7 @@ $('rm-sub').addEventListener('click', async function() {
 
       if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
       const result = await response.json();
-      if (!result.success) throw new Error('Ошибка записи: ' + (result.error || 
-'неизвестная ошибка'));
+      if (!result.success) throw new Error('Ошибка записи: ' + (result.error || 'неизвестная ошибка'));
 
       showThanks();
       return;
@@ -1814,8 +1813,7 @@ $('rm-sub').addEventListener('click', async function() {
         return;
       }
       if (attempt === MAX_ATTEMPTS) {
-        alert('Ошибка: ' + err.message + '\nПопробуйте нажать «Подтвердить» ещё 
-раз — данные не задвоятся.');
+        alert('Ошибка: ' + err.message + '\nПопробуйте нажать «Подтвердить» ещё раз — данные не задвоятся.');
         btn.disabled = false;
         btn.textContent = 'ПОДТВЕРДИТЬ';
       }
