@@ -1717,8 +1717,8 @@ window.closeRsvp = function() {
 $('rm-sub').addEventListener('click', async function() {
   const name = $('rf-name').value.trim();
   const att = document.querySelector('input[name="att"]:checked');
-  if (!name) { alert('Введите ваше имя'); return; }
-  if (!att) { alert('Выберите вариант'); return; }
+  if (!name) { alert('Введите ваше имя и фамилию'); return; }
+  if (!att) { alert('Пожалуйста, ответьте на вопрос: планируете ли вы присутствовать?'); return; }
 
   const foodEl = document.querySelector('input[name="food"]:checked');
   if (!foodEl) {
